@@ -1,0 +1,242 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import { Button } from "@/components/ui/Button";
+
+const navLinks = [
+  { label: "Planos", href: "#planos" },
+  { label: "Rede", href: "#rede" },
+  { label: "Telemedicina", href: "#telemedicina" },
+  { label: "Empresas", href: "#empresas" },
+];
+
+export function Navigation() {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 48);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Lock body scroll when menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
+  const closeMenu = () => setMenuOpen(false);
+
+  return (
+    <>
+      <motion.header
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
+        style={{
+          background: menuOpen
+            ? "transparent"
+            : scrolled
+            ? "rgba(255,255,255,0.94)"
+            : "transparent",
+          backdropFilter:
+            !menuOpen && scrolled ? "blur(20px) saturate(180%)" : "none",
+          WebkitBackdropFilter:
+            !menuOpen && scrolled ? "blur(20px) saturate(180%)" : "none",
+          borderBottom:
+            !menuOpen && scrolled
+              ? "1px solid rgba(123,107,178,0.1)"
+              : "1px solid transparent",
+        }}
+      >
+        <div
+          className="max-w-[1440px] mx-auto flex items-center justify-between"
+          style={{ padding: "1.1rem clamp(1.5rem, 5vw, 5rem)" }}
+        >
+          {/* Logo — maior */}
+          <a
+            href="#hero"
+            aria-label="Amélia Saúde — início"
+            onClick={closeMenu}
+            className="relative z-[60] flex items-center"
+          >
+            <Image
+              src={menuOpen ? "/logo-amelia-site-branca.png" : "/logo-amelia-site.png"}
+              alt="Amélia Saúde"
+              width={200}
+              height={56}
+              priority
+              className="h-14 w-auto object-contain transition-all duration-300"
+            />
+          </a>
+
+          {/* Direita: CTA + toggle */}
+          <div className="flex items-center gap-3">
+            <Button variant="purple" href="#contato" onClick={closeMenu}>
+              Fazer cotação
+            </Button>
+
+            {/* Hamburger toggle — pill arredondado */}
+            <motion.button
+              className="relative z-[60] flex flex-col justify-center items-center gap-[5px] rounded-full border transition-colors duration-300"
+              style={{
+                width: 48,
+                height: 48,
+                borderColor: menuOpen
+                  ? "rgba(255,255,255,0.3)"
+                  : "rgba(123,107,178,0.25)",
+                background: menuOpen
+                  ? "rgba(255,255,255,0.1)"
+                  : "rgba(123,107,178,0.06)",
+              }}
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
+              aria-expanded={menuOpen}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            >
+              <motion.span
+                animate={
+                  menuOpen
+                    ? { rotate: 45, y: 6, backgroundColor: "#ffffff" }
+                    : { rotate: 0, y: 0, backgroundColor: "#1a1a1a" }
+                }
+                transition={{ duration: 0.3 }}
+                className="block w-5 h-[1.5px] rounded-full"
+              />
+              <motion.span
+                animate={
+                  menuOpen
+                    ? { opacity: 0, x: -4, backgroundColor: "#ffffff" }
+                    : { opacity: 1, x: 0, backgroundColor: "#1a1a1a" }
+                }
+                transition={{ duration: 0.2 }}
+                className="block w-5 h-[1.5px] rounded-full"
+              />
+              <motion.span
+                animate={
+                  menuOpen
+                    ? { rotate: -45, y: -6, backgroundColor: "#ffffff" }
+                    : { rotate: 0, y: 0, backgroundColor: "#1a1a1a" }
+                }
+                transition={{ duration: 0.3 }}
+                className="block w-5 h-[1.5px] rounded-full"
+              />
+            </motion.button>
+          </div>
+        </div>
+      </motion.header>
+
+      {/* Fullscreen overlay menu */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0, clipPath: "inset(0 0 100% 0)" }}
+            animate={{ opacity: 1, clipPath: "inset(0 0 0% 0)" }}
+            exit={{ opacity: 0, clipPath: "inset(0 0 100% 0)" }}
+            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed inset-0 z-40 flex flex-col"
+            style={{
+              background:
+                "linear-gradient(135deg, #2d1f5e 0%, #5e4985 50%, #7b6bb2 100%)",
+            }}
+          >
+            {/* Background decorative elements */}
+            <div
+              className="absolute inset-0 pointer-events-none overflow-hidden"
+              aria-hidden
+            >
+              <div
+                className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full"
+                style={{
+                  background:
+                    "radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%)",
+                }}
+              />
+              <div
+                className="absolute bottom-[-15%] left-[-10%] w-[500px] h-[500px] rounded-full"
+                style={{
+                  background:
+                    "radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%)",
+                }}
+              />
+            </div>
+
+            {/* Nav links — centered */}
+            <nav
+              className="flex flex-col justify-center items-center flex-1 gap-2"
+              aria-label="Menu fullscreen"
+            >
+              {navLinks.map((link, i) => (
+                <motion.a
+                  key={link.href}
+                  href={link.href}
+                  onClick={closeMenu}
+                  initial={{ opacity: 0, y: 32 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 16 }}
+                  transition={{
+                    duration: 0.5,
+                    delay: 0.1 + i * 0.07,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  className="font-display text-[clamp(2.5rem,8vw,5rem)] font-light text-white/90 hover:text-white tracking-wider leading-[1.15] transition-colors duration-300 focus-visible:outline-none"
+                  style={{ fontFamily: "var(--font-cormorant)" }}
+                >
+                  {link.label}
+                </motion.a>
+              ))}
+
+              {/* CTA in menu */}
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 12 }}
+                transition={{
+                  duration: 0.5,
+                  delay: 0.1 + navLinks.length * 0.07,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                className="mt-10"
+              >
+                <Button
+                  variant="ghost-white"
+                  href="#contato"
+                  onClick={closeMenu}
+                >
+                  Fazer cotação
+                </Button>
+              </motion.div>
+            </nav>
+
+            {/* Footer line */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.4 }}
+              className="pb-10 text-center"
+            >
+              <p
+                className="font-sans text-xs tracking-[0.2em] uppercase"
+                style={{ color: "rgba(255,255,255,0.35)" }}
+              >
+                Amélia Saúde · Rio de Janeiro
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
